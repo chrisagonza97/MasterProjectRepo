@@ -16,8 +16,6 @@ augment = K.AugmentationSequential(
 color_jitter = K.ColorJitter(0.2, 0.2, 0.2, 0.2, p=0.5, same_on_batch=True)
 
 def augment_train(X_train, Y_train, augment_times=2):
-    #append the original data to augmented data
-    #print(Y_train.dim())
     Y_train = Y_train.unsqueeze(1)
     X_train_aug, Y_train_aug = [X_train], [Y_train]
     

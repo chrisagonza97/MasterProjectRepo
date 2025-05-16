@@ -283,14 +283,8 @@ def train_model_transunet_sweep(X_train, Y_train, X_val, Y_val, save=True, n_epo
     val_dataloader=DataLoader(val_data,batch_size=8,shuffle=False)
 
     encoder_name="resnet18" if encoder_name not in smp.encoders.get_encoder_names() else encoder_name
-    #model=dict(unet=smp.Unet,
-    #            fpn=smp.FPN,
-    #            ).get(model_key, smp.Unet)
-    #model=model(classes=3,in_channels=3, encoder_name=encoder_name, encoder_weights=None).to(device)
-    model = TransUNet(in_channels=3, classes=3).to(device)
+
     optimizer=torch.optim.SGD(model.parameters(),lr = lr,momentum=0.9, weight_decay=0.0001)
-    #class_weight=compute_class_weight(class_weight='balanced', classes=np.unique(Y_train.numpy().flatten()), y=Y_train.numpy().flatten())
-    #class_weight=torch.FloatTensor(class_weight).to(device)
     class_weight = compute_class_weight(class_weight='balanced', classes=np.unique(Y_train.cpu().numpy().flatten()), y=Y_train.cpu().numpy().flatten())
     class_weight = torch.FloatTensor(class_weight).to(device)
 

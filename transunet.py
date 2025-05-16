@@ -41,33 +41,16 @@ class TransUNetEncoder(nn.Module):
         self.linear_projection = nn.Linear(1024, 768)
         self.tranformers = TransformEncoder(embed_dim=768, num_heads=12, num_layers=12)
         
-        # ADD POSITIONAL EMBEDDINGS
-        #self.position_embeddings = nn.Parameter(torch.randn(1, 256, 768))  # (1, seq_len, embed_dim)
-
 
         #self.decoder   
     def forward(self, x):
         """ Extract CNN feature maps before passing to Transformer. """
         skip1 = self.skip1(x)  # 1/2 resolution (before pooling)
         x = self.maxpool(skip1)  # Apply MaxPool separately
-        #print("maxpool shape")
-        #print(x.shape) 
         skip2 = self.skip2(x)  # 1/4 resolution
         skip3 = self.skip3(skip2)  # 1/8 resolution
         transformer_input = self.transformer_input(skip3)  # 1/16 resolution
-        #print shape
-        #print("transformer_input shape")
-        #print(transformer_input.shape ) #should be (batch_size, 1024, 16, 16)
 
-        #print("skip 1 shape")
-        #print(skip1.shape) #should be (batch_size, 64, 64, 64)
-        #print("skip 2 shape")
-        #print(skip2.shape) #should be (batch_size, 256, 32, 32)
-        #print("skip 3 shape")
-        #print(skip3.shape) #should be (batch_size, 512, 16, 16)
-
-        #next do linear projection to get the input for the transformer
-        # Reshape to match Transformer input: (batch_size, H*W, channels)
         batch_size, channels, H, W = transformer_input.shape
         #transformer_input = transformer_input.permute(0, 2, 3, 1).reshape(batch_size, H * W, channels)
         transformer_input = transformer_input.flatten(2).transpose(1, 2)
@@ -75,8 +58,6 @@ class TransUNetEncoder(nn.Module):
         #(batch_size, seq_len, embed_dim)
         transformer_input = self.linear_projection(transformer_input)
 
-        # ADD POSITION EMBEDDINGS
-        #transformer_input += self.position_embeddings[:, :transformer_input.shape[1], :]  
 
         transformer_output = self.tranformers(transformer_input)
 
@@ -99,7 +80,6 @@ class TransUNetDecoder(nn.Module):
 
     def forward(self, x, skip_connections):
 
-        #x = torch.cat((x, skip_connections[0]), dim=1)
         x = self.conv0(x)
         #print(x.shape)
         x = self.upsample(x)
@@ -118,8 +98,6 @@ class TransUNetDecoder(nn.Module):
         x = self.upsample(x)
         x = self.conv4(x)
         x = self.final_conv(x)
-
-        #x = torch.softmax(x, dim=1)
 
         return x
 
