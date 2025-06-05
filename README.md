@@ -62,9 +62,4 @@ All code is written in **Python 3.12.2**.
 This repository builds off the original Cedars-Sinai project:  
 **[Cedars AI Campus - Project 3](https://github.com/jlevy44/Cedars_AI_Campus_Tutorials/tree/main/Project3)**
 
----
-
-## License
-
-This project is for academic and research use only. Please cite the original Cedars AI Campus repo if used.
 
